@@ -37,7 +37,7 @@ RelComp <- function(data, varlist, reliab,
   corr <- cor(data[, varlist], method = method, use = use)
   
   # create rstar matrix with corrs on off-diagonal and reliabilitys on diagonal
-  diag  <- diag(corr)
+  diag  <- diag(diag(corr))
   rel2  <- diag(reliab)
   diff  <- diag - rel2
   rstar <- corr - diff
@@ -46,8 +46,9 @@ RelComp <- function(data, varlist, reliab,
   # generalized eigenvectors - vectors of weights that are not
   # normed to have sum of squared elements = 1
   reliabilities   <- geigen(rstar, corr)
-  weights_nonorm <- reliabilities$vectors
-  reliabilities   <- reliabilities$values
+  weights_nonorm  <- reliabilities$vectors
+  weights_nonorm  <- -1*weights_nonorm[,ncol(weights_nonorm):1] #TODO: jason sending output, why columns not all -1*?
+  reliabilities   <- rev( reliabilities$values )
   
   nvar <- nrow(weights_nonorm)
   
